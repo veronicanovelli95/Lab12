@@ -11,11 +11,16 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class RiversDAO {
+	
+	
+	public RiversDAO(){
+		
+	}
 
 	public List<River> getAllRivers() {
 		final String sql = "SELECT id, name FROM river";
 
-		List<River> rivers = new LinkedList<River>();
+		List<River> rivers= new LinkedList<River>();
 
 		try {
 			Connection conn = DBConnect.getConnection();
@@ -47,8 +52,11 @@ public class RiversDAO {
 			ResultSet res = st.executeQuery();
 
 			while (res.next()) {
-				flows.add(new Flow(res.getDate("day").toLocalDate(), res.getDouble("flow"),
-						rivers.get(rivers.indexOf(new River(res.getInt("river"))))));
+				Flow f =new Flow(res.getDate("day").toLocalDate(), res.getDouble("flow"),rivers.get(rivers.indexOf(new River(res.getInt("river")))));
+				flows.add(f);
+				rivers.get(rivers.indexOf(new River(res.getInt("river")))).addFlow(f);
+				
+				
 			}
 
 			conn.close();
@@ -61,15 +69,19 @@ public class RiversDAO {
 		return flows;
 	}
 
-	public static void main(String[] args) {
-		RiversDAO dao = new RiversDAO();
-
-		List<River> rivers = dao.getAllRivers();
-		System.out.println(rivers);
-
-		List<Flow> flows = dao.getAllFlows(rivers);
-		System.out.format("Loaded %d flows\n", flows.size());
-		// System.out.println(flows) ;
-	}
+	
+	
+	
+	
+//	public static void main(String[] args) {
+//		RiversDAO dao = new RiversDAO();
+//
+//		List<River> rivers = dao.getAllRivers();
+//		System.out.println(rivers);
+//
+//		List<Flow> flows = dao.getAllFlows(rivers);
+//		System.out.format("Loaded %d flows\n", flows.size());
+//		// System.out.println(flows) ;
+//	}
 
 }
